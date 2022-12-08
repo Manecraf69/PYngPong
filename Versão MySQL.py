@@ -10,6 +10,10 @@ conexao = mysql.connector.connect(
 )
 cursor = conexao.cursor()
 
+placarMax = 5
+vaiA2 = "s"
+tirarDe0 = 3
+
 def total_partida(ganhador, perdedor):
     # jogador 1
     comando = f'SELECT jog_ganhador FROM historico WHERE jog_ganhador = ("{ganhador}")'
@@ -230,7 +234,7 @@ def pontuacaoPingPong():
             pontosDireita = 0
             pontosEsquerda = 0
 
-            while E < 5 and D < 5:
+            while E < placarMax and D < placarMax:
                 ponto = input("Digite quem fez o ponto (\033[1;34md\033[0;0m para direita \033[1;34me\033[0;0m para esquerda): ")
                 if ponto == "d":
                     D += 1
@@ -238,39 +242,40 @@ def pontuacaoPingPong():
                 elif ponto == "e":
                     E += 1
                     pontosEsquerda += 1
-                print(Direita,"(Direita)",D, "x", E, Esquerda, "(Esquerda)")
+                print(Direita,"(Direita)\033[1;34m",D, "x", E, "\033[0;0m", Esquerda, "(Esquerda)")
 
-                if D == 3 and E == 0:
-                    D = 5
+                if D == tirarDe0 and E == 0:
+                    D = placarMax
 
-                elif E == 3 and D == 0:
-                    E = 5
+                elif E == tirarDe0 and D == 0:
+                    E = placarMax
     
-                if E == 4 and D == 4:
-                    print("Foi a 2")
-                    E = 0
-                    D = 0
+                if vaiA2 == "s":
+                    if E == placarMax - 1 and D == placarMax - 1:
+                        print("Foi a 2")
+                        E = 0
+                        D = 0
 
-                    while E < 2 and D < 2:
-                        ponto = input("Digite quem fez o ponto: ")
-                        if ponto == "d":
-                            D += 1
-                            pontosDireita += 1
-                        elif ponto == "e":
-                            E += 1
-                            pontosEsquerda += 1
-                        print(Direita,"(Direita)",D, "x", E, Esquerda, "(Esquerda)")
-        
-                        if E == 1 and D == 1:
-                            E -= 1
-                            D -= 1
-                            print("Foi a 2 de novo")
-                        if E == 2:
-                            E = 5
-                        elif D == 2:
-                            D = 5
+                        while E < 2 and D < 2:
+                            ponto = input("Digite quem fez o ponto: ")
+                            if ponto == "d":
+                                D += 1
+                                pontosDireita += 1
+                            elif ponto == "e":
+                                E += 1
+                                pontosEsquerda += 1
+                            print(Direita,"(Direita)\033[1;34m",D, "x", E, "\033[0;0m", Esquerda, "(Esquerda)")
+            
+                            if E == 1 and D == 1:
+                                E -= 1
+                                D -= 1
+                                print("Foi a 2 de novo")
+                            if E == 2:
+                                E = placarMax
+                            elif D == 2:
+                                D = placarMax
 
-            if D == 5:
+            if D == placarMax:
                 print("\033[1;92mJogador da direita", Direita, "ganhou\033[0;0m")
                 ganhador = Direita
                 perdedor = Esquerda
@@ -279,7 +284,7 @@ def pontuacaoPingPong():
                 posJogo(ganhador, perdedor, pontosGanhador, pontosPerdedor)
                 print("Nome do jogador que vai entrar agora:\033[1;33m",jogadoresNaFila[0],"\033[0;0m")
 
-            elif E == 5:
+            elif E == placarMax:
                 print("\033[1;92mJogador da esquerda", Esquerda, "ganhou\033[0;0m") 
                 ganhador = Esquerda
                 perdedor = Direita
@@ -408,7 +413,31 @@ while opcao != "0404":
             print("\033[1;33mSem jogadores cadastrados!\033[0;0m")
 
     elif opcao == "9":
-        pass
+        exc = 0
+        while exc != 1:
+            placarMax = input("Selecione a quantidade de \033[1;34mpontos\033[0;0m necessários para \033[1;34mvencer\033[0;0m a partida: ")
+            if not placarMax.isdigit():
+                    print("\033[1;33mDigite um número!\033[0;0m")
+            else:
+                exc = 1
+                placarMax = float(placarMax)
+
+        exc = 0
+        while exc != 1:
+            vaiA2 = input("Digite \033[1;34ms\033[0;0m para ter sistema de vai a dois e \033[1;34mn\033[0;0m para não ter: ")
+            if vaiA2 != "s" and vaiA2 != "n":
+                print("Digite \033[1;34ms\033[0;0m ou \033[1;34mn\033[0;0m!")
+            else:
+                exc = 1
+
+        exc = 0
+        while exc != 1:
+            tirarDe0 = input("Digite com quantos \033[1;34mpontos a zero\033[0;0m a partida acaba: ")
+            if not tirarDe0.isdigit():
+                    print("\033[1;33mDigite um número!\033[0;0m")
+            else:
+                exc = 1
+                tirarDe0 = float(tirarDe0)
 
     elif opcao == "10":
         escolha = input("Digite \033[1;34m1\033[0;0m para histórico completo e \033[1;34m2\033[0;0m para o histórico de um jogador específico: ")
