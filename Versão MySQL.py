@@ -228,11 +228,66 @@ def jogadorInexistente():
         else:
             print("\033[1;33mO jogador não está registrado!\033[0;0m")
 
+    elif atualizar == 1:
+        if len(busca) != 0:
+            nomeNovo = input("Digite o \033[1;33mnovo nome\033[0;0m para dar ao jogador (se o nome já existir serão \033[1;33munificados as estatísticas e histórico\033[0;0m): ")
+            # atualiza histórico
+            comando = f'UPDATE historico SET jog_ganhador = ("{nomeNovo}") WHERE jog_ganhador = ("{jogInexistente}")'
+            cursor.execute(comando)
+            conexao.commit()
+            comando = f'UPDATE historico SET jog_perdedor = ("{nomeNovo}") WHERE jog_perdedor = ("{jogInexistente}")'
+            cursor.execute(comando)
+            conexao.commit()
+
+            # busca os pontos e soma no jogador correto
+            comando = f'SELECT pontos, nome FROM jogador WHERE nome = ("{jogInexistente}")'
+            cursor.execute(comando)
+            busca1 = cursor.fetchall()
+            
+            pontosJogadorAntigo = busca1[0][0]
+
+            comando = f'SELECT pontos, nome FROM jogador WHERE nome = ("{nomeNovo}")'
+            cursor.execute(comando)
+            busca2 = cursor.fetchall()
+
+            # apenas a troca do nome
+            if len(busca2) != 1:
+                comando = f'UPDATE jogador SET nome = ("{nomeNovo}") WHERE nome = ("{jogInexistente}")'
+                cursor.execute(comando)
+                conexao.commit()
+
+                if jogInexistente in jogadoresNaFila:
+                    pos = jogadoresNaFila.index(jogInexistente)
+                    jogadoresNaFila[pos] = nomeNovo
+                
+            # unificação de dois usuários em um só, juntando estatísticas
+            if len(busca2) == 1:
+                pontosJogadorNovo = busca2[0][0]
+            
+                novosPontos = pontosJogadorAntigo + pontosJogadorNovo
+
+                comando = f'UPDATE jogador SET pontos = ("{novosPontos}") WHERE nome = ("{nomeNovo}")'
+                cursor.execute(comando)
+                conexao.commit()
+
+                comando = f'DELETE FROM jogador WHERE nome = ("{jogInexistente}")'
+                cursor.execute(comando)
+                conexao.commit()
+
+                if jogInexistente in jogadoresNaFila:
+                    pos = jogadoresNaFila.index(jogInexistente)
+                    jogadoresNaFila.remove(jogInexistente)
+            print("\033[1;92mInformaçôes atualizadas!\033[0;0m")
+        else:
+            print("\033[1;33mO jogador não está registrado!\033[0;0m")
+        
 def pontuacaoPingPong():
             D = 0
             E = 0
             pontosDireita = 0
             pontosEsquerda = 0
+
+            print("Digite \033[1;34mdd\033[0;0m para retirar um ponto da direita e \033[1;34mee\033[0;0m para retirar um ponto da esquerda.")
 
             while E < placarMax and D < placarMax:
                 ponto = input("Digite quem fez o ponto (\033[1;34md\033[0;0m para direita \033[1;34me\033[0;0m para esquerda): ")
@@ -242,6 +297,12 @@ def pontuacaoPingPong():
                 elif ponto == "e":
                     E += 1
                     pontosEsquerda += 1
+                elif ponto == "dd":
+                    D -= 1
+                    pontosDireita -= 1
+                elif ponto == "ee":
+                    E -= 1
+                    pontosEsquerda -= 1
                 print(Direita,"(Direita)\033[1;34m",D, "x", E, "\033[0;0m", Esquerda, "(Esquerda)")
 
                 if D == tirarDe0 and E == 0:
@@ -264,6 +325,12 @@ def pontuacaoPingPong():
                             elif ponto == "e":
                                 E += 1
                                 pontosEsquerda += 1
+                            elif ponto == "dd":
+                                D -= 1
+                                pontosDireita -= 1
+                            elif ponto == "ee":
+                                E -= 1
+                                pontosEsquerda -= 1
                             print(Direita,"(Direita)\033[1;34m",D, "x", E, "\033[0;0m", Esquerda, "(Esquerda)")
             
                             if E == 1 and D == 1:
@@ -298,6 +365,7 @@ while opcao != "0404":
     adicionar = 0
     deletar = 0
     buscar = 0
+    atualizar = 0
     opcao = input("\033[1;95mDigite o número com a respectiva opção que deseja trabalhar:\033[0;0m" 
                   "\n 1. Adicionar alguém à fila" 
                   "\n 2. Verificar o próximo da fila" 
@@ -309,7 +377,8 @@ while opcao != "0404":
                   "\n 8. Ver jogadores"
                   "\n 9. Modificar regras"
                   "\n 10. Ver histórico"
-                  "\n 11. Encerrar o código" "\n")
+                  "\n 11. Editar jogador"
+                  "\n 12. Encerrar o código" "\n")
 
     if opcao == "1":
         jogadorNovo = input("\033[1;34mDigite quem entrou na fila: \033[0;0m")
@@ -402,6 +471,8 @@ while opcao != "0404":
         jogInexistente = input("Digite o nome do jogador que deseja \033[1;33mexcluir\033[0;0m: ")
         deletar = 1
         jogadorInexistente()
+        if jogInexistente in jogadoresNaFila:
+            jogadoresNaFila.remove(jogInexistente)
 
     elif opcao == "8":
         comando = f'SELECT nome FROM jogador'
@@ -457,6 +528,11 @@ while opcao != "0404":
             print("\033[1;33mSelecione uma opção válida!\033[0;0m")
 
     elif opcao == "11":
+        jogInexistente = input("Digite o \033[1;33mnome\033[0;0m do jogador que deseja \033[1;33malterar\033[0;0m: ")
+        atualizar = 1
+        jogadorInexistente()
+
+    elif opcao == "12":
         print("\033[1;36mPrograma encerrado, agradecemos por usar nosso trabalho!\033[0;0m")
 
     else:

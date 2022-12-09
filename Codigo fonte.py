@@ -69,17 +69,16 @@ def pontuacaoPingPong():
                 print("Nome do jogador que vai entrar agora:\033[1;33m",jogadoresNaFila[0],"\033[0;0m")
 
 opcao = 0
-while opcao != "7":
-    opcao = int(input("\033[1;95mDigite o número com a respectiva opção que deseja trabalhar:\033[0;0m" 
+while opcao != "6":
+    opcao = input("\033[1;95mDigite o número com a respectiva opção que deseja trabalhar:\033[0;0m" 
                   "\n 1. Adicionar alguém à fila" 
                   "\n 2. Verificar o próximo da fila" 
                   "\n 3. Começar os pontos da partida" 
                   "\n 4. Inserir ganhador e perdedor" 
                   "\n 5. Tirar alguém da fila"
-                  "\n 6. Ver as estatísticas de um jogador"
-                  "\n 7. Encerrar o código" "\n"))
+                  "\n 6. Encerrar o código" "\n")
 
-    if opcao == 1:
+    if opcao == "1":
         jogadorNovo = input("\033[1;34mDigite quem entrou na fila: \033[0;0m")
         if jogadorNovo in jogadoresNaFila:
             print("\033[1;33mO jogador já está na fila!\033[0;0m")
@@ -87,14 +86,14 @@ while opcao != "7":
             jogadoresNaFila.insert(-1, jogadorNovo)
             print("\033[1;92m",jogadorNovo, "foi adicionado à fila.\033[0;0m")
 
-    if opcao == 2:
+    elif opcao == "2":
         if len(jogadoresNaFila) == 0:
             print("\033[1;31mSem jogadores na fila!\033[0;0m")
         elif len(jogadoresNaFila) >= 1:
             print("O próximo da fila é:\033[1;33m",jogadoresNaFila[0],"\033[0;0m")
             print("A ordem para jogar é:", jogadoresNaFila)
 
-    if opcao == 3:
+    elif opcao == "3":
         Direita = input("Quem é o jogador da direita? ")
         if Direita not in jogadoresNaFila:
             jogadoresNaFila.insert(-1, Direita)
@@ -105,7 +104,7 @@ while opcao != "7":
         print("\033[1;97mA partida começa\033[0;0m")
         pontuacaoPingPong()
 
-    if opcao == 4:
+    elif opcao == "4":
         ganhador = input("Digite o nome de quem ganhou: ")
         if ganhador not in jogadoresNaFila:
             jogadoresNaFila.insert(-1, ganhador)
@@ -117,13 +116,13 @@ while opcao != "7":
         print("\033[1;92mFila atualizada!\033[0;0m")
         print("O próximo da fila é:\033[1;33m",jogadoresNaFila[0],"\033[0;0m")
 
-    if opcao == 5:
+    elif opcao == "5":
         jogadoresNaFila.remove(input("Digite o nome de quem saiu da fila: "))
         print("\033[1;31mO jogador foi removido da fila.\033[0;0m")
 
-    if opcao == 6:
-        pass
-
-    if opcao == 7:
+    elif opcao == "6":
         print("\033[1;36mPrograma encerrado, agradecemos por usar nosso trabalho!\033[0;0m")
         break
+
+    else:
+        print("\033[1;33mSelecione uma opção válida!\033[0;0m")
