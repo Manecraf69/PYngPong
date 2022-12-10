@@ -99,6 +99,8 @@ def pontos(ganhador, perdedor):
     cursor.execute(comando)
     conexao.commit() 
 
+    print("\033[1;97mO jogador\033[0;34m", ganhador, "\033[0;32mganhou", pontos_ganhos, "\033[1;97mpontos e o jogador\033[0;34m", perdedor, "\033[0;31mperdeu", pontos_perdidos, "\033[1;97mpontos.\033[0;0m")
+
 def estatisticas(jogador):
     comando = f'SELECT jog_ganhador FROM historico WHERE jog_ganhador = ("{jogador}")'
     cursor.execute(comando)
@@ -134,7 +136,7 @@ def estatisticas(jogador):
 
     if media_vitder <= 1:
         habilidade = 1
-    elif media_vitder < 3:
+    elif media_vitder < 3 and n_partidas >= 5:
         habilidade = 2
     elif media_vitder < 5:
         habilidade = 3
@@ -159,7 +161,15 @@ def posJogo(ganhador, perdedor, pontosGanhador, pontosPerdedor):
 
     resultado = f"{pontosGanhador} x {pontosPerdedor}"
 
-    comando = f'INSERT INTO historico (jog_ganhador, jog_perdedor, resultado) VALUES ("{ganhador}","{perdedor}","{resultado}")'
+    comando = f'SELECT nivel_habilidade FROM jogador WHERE nome = ("{ganhador}")'
+    cursor.execute(comando)
+    habilidadeGanhador = cursor.fetchall()
+
+    comando = f'SELECT nivel_habilidade FROM jogador WHERE nome = ("{perdedor}")'
+    cursor.execute(comando)
+    habilidadePerdedor = cursor.fetchall()
+
+    comando = f'INSERT INTO historico (jog_ganhador, habilidade_ganhador, jog_perdedor, habilidade_perdedor, resultado) VALUES ("{ganhador}","{habilidadeGanhador[0][0]}","{perdedor}","{habilidadePerdedor[0][0]}","{resultado}")'
     cursor.execute(comando)
     conexao.commit() 
 
@@ -188,7 +198,7 @@ def jogadorInexistente():
             comando = f'DELETE FROM jogador WHERE nome = ("{jogInexistente}")'
             cursor.execute(comando)
             conexao.commit()
-            print("\033[1;31mO jogador foi removido.\033[0;0m")
+            print("\033[1;31mO jogador foi excluído.\033[0;0m")
         else:
             print("\033[1;33mO jogador não está registrado!\033[0;0m")  
 
@@ -209,7 +219,7 @@ def jogadorInexistente():
 
     elif buscar == 2:
         if len(busca) != 0:
-            comando1 = f'SELECT jog_ganhador, jog_perdedor, resultado FROM historico WHERE jog_ganhador = ("{jogInexistente}")'
+            comando1 = f'SELECT jog_ganhador, habilidade_ganhador, jog_perdedor, habilidade_perdedor, resultado FROM historico WHERE jog_ganhador = ("{jogInexistente}")'
             cursor.execute(comando1)
             busca1 = cursor.fetchall()
             for resultado in busca1:
@@ -237,7 +247,7 @@ def jogadorInexistente():
             cursor.execute(comando)
             conexao.commit()
 
-            # corrige histórico caso haja a ocasiao de o jogador ter jogado "contra si mesmo"
+            # corrige histórico caso haja a ocasião de o jogador ter jogado "contra si mesmo"
             historicoRepetido(jogInexistente)
             
             # busca os pontos e soma no jogador correto
@@ -276,7 +286,6 @@ def jogadorInexistente():
                 conexao.commit()
 
                 if jogInexistente in jogadoresNaFila:
-                    pos = jogadoresNaFila.index(jogInexistente)
                     jogadoresNaFila.remove(jogInexistente)
             
             # atualiza estatísticas
@@ -288,95 +297,95 @@ def jogadorInexistente():
             print("\033[1;33mO jogador não está registrado!\033[0;0m")
         
 def pontuacaoPingPong():
-            D = 0
             E = 0
-            pontosDireita = 0
+            D = 0
             pontosEsquerda = 0
+            pontosDireita = 0
 
-            print("Digite \033[1;34mdd\033[0;0m para retirar um ponto da direita e \033[1;34mee\033[0;0m para retirar um ponto da esquerda.")
+            print("\033[0;33mDigite \033[0;31mee\033[0;0m \033[0;33mpara retirar um ponto da esquerda e \033[0;31mdd\033[0;0m \033[0;33mpara retirar um ponto da direita.\033[0;0m")
 
             while E < placarMax and D < placarMax:
-                ponto = input("Digite quem fez o ponto (\033[1;34md\033[0;0m para direita \033[1;34me\033[0;0m para esquerda): ")
-                if ponto == "d":
-                    D += 1
-                    pontosDireita += 1
-                elif ponto == "e":
+                ponto = input("Digite quem fez o ponto (\033[1;34me\033[0;0m para esquerda \033[1;34md\033[0;0m para direita): ")
+                if ponto == "e":
                     E += 1
                     pontosEsquerda += 1
-                elif ponto == "dd":
-                    D -= 1
-                    pontosDireita -= 1
+                elif ponto == "d":
+                    D += 1
+                    pontosDireita += 1
                 elif ponto == "ee":
                     E -= 1
                     pontosEsquerda -= 1
-                if D < 0:
-                    D = 0
-                    pontosDireita = 0
+                elif ponto == "dd":
+                    D -= 1
+                    pontosDireita -= 1
                 if E < 0:
                     E = 0
                     pontosEsquerda = 0
-                print(Direita,"(Direita)\033[1;34m",D, "x", E, "\033[0;0m", Esquerda, "(Esquerda)")
+                if D < 0:
+                    D = 0
+                    pontosDireita = 0
+                print("\033[0;34m(Esquerda)", Esquerda, "\033[4;34m\033[1;34m", E, "x", D, "\033[0;0m\033[0;34m", Direita, "(Direita)\033[0;0m")
 
-                if D == tirarDe0 and E == 0:
-                    D = placarMax
-
-                elif E == tirarDe0 and D == 0:
+                if E == tirarDe0 and D == 0:
                     E = placarMax
     
+                elif D == tirarDe0 and E == 0:
+                    D = placarMax
+
                 if vaiA2 == "s":
                     if E == placarMax - 1 and D == placarMax - 1:
-                        print("Foi a 2")
+                        print("\033[0;32mFoi a 2\033[0;0m")
                         E = 0
                         D = 0
 
                         while E < 2 and D < 2:
                             ponto = input("Digite quem fez o ponto: ")
-                            if ponto == "d":
-                                D += 1
-                                pontosDireita += 1
-                            elif ponto == "e":
+                            if ponto == "e":
                                 E += 1
                                 pontosEsquerda += 1
-                            elif ponto == "dd":
-                                D -= 1
-                                pontosDireita -= 1
+                            elif ponto == "d":
+                                D += 1
+                                pontosDireita += 1
                             elif ponto == "ee":
                                 E -= 1
                                 pontosEsquerda -= 1
-                            if D < 0:
-                                D = 0
-                                pontosDireita = 0
-                            if E < 0:
-                                E = 0
-                                pontosEsquerda = 0
-                            print(Direita,"(Direita)\033[1;34m",D, "x", E, "\033[0;0m", Esquerda, "(Esquerda)")
-            
+                                if E < 0:
+                                    E = 0
+                                    pontosEsquerda = 0
+                            elif ponto == "dd":
+                                D -= 1
+                                pontosDireita -= 1
+                                if D < 0:
+                                    D = 0
+                                    pontosDireita = 0
+                            print("\033[0;34m(Esquerda)", Esquerda, "\033[4;34m\033[1;34m", E, "x", D, "\033[0;0m\033[0;34m", Direita, "(Direita)\033[0;0m")
+
                             if E == 1 and D == 1:
                                 E -= 1
                                 D -= 1
-                                print("Foi a 2 de novo")
+                                print("\033[0;32mFoi a 2 de novo\033[0;0m")
                             if E == 2:
                                 E = placarMax
                             elif D == 2:
                                 D = placarMax
 
-            if D == placarMax:
-                print("\033[1;92mJogador da direita", Direita, "ganhou\033[0;0m")
-                ganhador = Direita
-                perdedor = Esquerda
-                pontosGanhador = pontosDireita
-                pontosPerdedor = pontosEsquerda
-                posJogo(ganhador, perdedor, pontosGanhador, pontosPerdedor)
-                print("Nome do jogador que vai entrar agora:\033[1;33m",jogadoresNaFila[0],"\033[0;0m")
-
-            elif E == placarMax:
+            if E == placarMax:
                 print("\033[1;92mJogador da esquerda", Esquerda, "ganhou\033[0;0m") 
                 ganhador = Esquerda
                 perdedor = Direita
                 pontosGanhador = pontosEsquerda
                 pontosPerdedor = pontosDireita
                 posJogo(ganhador, perdedor, pontosGanhador, pontosPerdedor)
-                print("Nome do jogador que vai entrar agora:\033[1;33m",jogadoresNaFila[0],"\033[0;0m")
+                print("Nome do jogador que vai entrar agora:\033[0;34m",jogadoresNaFila[0],"\033[0;0m")
+
+            elif D == placarMax:
+                print("\033[1;92mJogador da direita", Direita, "ganhou\033[0;0m")
+                ganhador = Direita
+                perdedor = Esquerda
+                pontosGanhador = pontosDireita
+                pontosPerdedor = pontosEsquerda
+                posJogo(ganhador, perdedor, pontosGanhador, pontosPerdedor)
+                print("Nome do jogador que vai entrar agora:\033[0;34m",jogadoresNaFila[0],"\033[0;0m")
 
 opcao = 0
 while opcao != "0404":
@@ -399,12 +408,12 @@ while opcao != "0404":
                   "\n 12. Encerrar o código" "\n")
 
     if opcao == "1":
-        jogadorNovo = input("\033[1;34mDigite quem entrou na fila: \033[0;0m")
+        jogadorNovo = input("\033[0;32mDigite quem entrou na fila: \033[0;0m")
         if jogadorNovo in jogadoresNaFila:
-            print("\033[1;33mO jogador já está na fila!\033[0;0m")
+            print("\033[0;33mO jogador já está na fila!\033[0;0m")
         else:
             jogadoresNaFila.insert(-1, jogadorNovo)
-            print("\033[1;92m",jogadorNovo, "foi adicionado à fila.\033[0;0m")
+            print("\033[1;97m",jogadorNovo, "\033[1;92mfoi adicionado à fila.\033[0;0m")
 
         jogInexistente = jogadorNovo
         adicionar = 1
@@ -412,29 +421,13 @@ while opcao != "0404":
 
     elif opcao == "2":
         if len(jogadoresNaFila) == 0:
-            print("\033[1;33mSem jogadores na fila!\033[0;0m")
+            print("\033[0;33mSem jogadores na fila!\033[0;0m")
         elif len(jogadoresNaFila) >= 1:
-            print("O próximo da fila é:\033[1;92m",jogadoresNaFila[0],"\033[0;0m")
-            print("A ordem para jogar é:", jogadoresNaFila)
+            print("\033[4;34mO próximo da fila é:\033[1;94m",jogadoresNaFila[0],"\033[0;0m")
+            print("\033[0;34mA ordem para jogar é:", jogadoresNaFila)
 
     elif opcao == "3":
-        Direita = input("Quem é o jogador da direita? ")
-        if Direita not in jogadoresNaFila:
-            jogadoresNaFila.insert(-1, Direita)
-
-        jogInexistente = Direita
-        adicionar = 1
-        jogadorInexistente()
-
-        exc = 0
-        while exc != 1:
-            Esquerda = input("Quem é o jogador da Esquerda? ")
-
-            if Direita == Esquerda:
-                print("\033[1;33mUm jogador não pode jogar contra si mesmo!\033[0;0m")
-            else:
-                exc = 1
-        
+        Esquerda = input("\033[0;32mQuem é o jogador da Esquerda? \033[0;0m")
         if Esquerda not in jogadoresNaFila:
             jogadoresNaFila.insert(-1, Esquerda)
 
@@ -442,17 +435,33 @@ while opcao != "0404":
         adicionar = 1
         jogadorInexistente()
 
-        print("\033[1;97mA partida começa\033[0;0m")
+        exc = 0
+        while exc != 1:
+            Direita = input("\033[0;32mQuem é o jogador da Direita? \033[0;0m")
+
+            if Esquerda == Direita:
+                print("\033[0;33mUm jogador não pode jogar contra si mesmo!\033[0;0m")
+            else:
+                exc = 1
+        
+        if Direita not in jogadoresNaFila:
+            jogadoresNaFila.insert(-1, Direita)
+
+        jogInexistente = Direita
+        adicionar = 1
+        jogadorInexistente()
+
+        print("\033[1;92mA partida começa\033[0;0m")
         pontuacaoPingPong()
 
     elif opcao == "4":
-        ganhador = input("Digite o \033[1;34mnome\033[0;0m de quem ganhou: ")
+        ganhador = input("\033[0;32mDigite o \033[1;34mnome\033[0;32m de quem ganhou: \033[0;0m")
         if ganhador not in jogadoresNaFila:
             jogadoresNaFila.insert(-1, ganhador)
 
         exc = 0
         while exc != 1:
-            pontosGanhador = input("Digite quantos \033[1;34mpontos\033[0;0m fez o ganhador: ")
+            pontosGanhador = input("\033[0;32mDigite quantos \033[1;34mpontos\033[0;32m fez o ganhador: \033[0;0m")
             if not pontosGanhador.isdigit():
                 print("\033[1;33mDigite um número!\033[0;0m")
             else:
@@ -463,7 +472,7 @@ while opcao != "0404":
 
         exc = 0
         while exc != 1:
-            perdedor = input("Digite o \033[1;34mnome\033[0;0m de quem perdeu: ")
+            perdedor = input("\033[0;32mDigite o \033[1;34mnome\033[0;32m de quem perdeu: \033[0;0m")
             if perdedor == ganhador:
                 print("\033[1;33mUm jogador não pode jogar contra si mesmo!\033[0;0m")
             else:
@@ -474,7 +483,7 @@ while opcao != "0404":
                 
         exc = 0
         while exc != 1:
-            pontosPerdedor = input("Digite quantos \033[1;34mpontos\033[0;0m fez o perdedor: ")
+            pontosPerdedor = input("\033[0;32mDigite quantos \033[1;34mpontos\033[0;32m fez o perdedor: \033[0;0m")
             if not pontosPerdedor.isdigit():
                 print("\033[1;33mDigite um número!\033[0;0m")
             else:
@@ -488,15 +497,15 @@ while opcao != "0404":
         print("O próximo da fila é:\033[1;33m",jogadoresNaFila[0],"\033[0;0m")
 
     elif opcao == "5":
-        jogadorRemovido = input("Digite quem deseja \033[1;33mtirar\033[0;0m da fila: ")
+        jogadorRemovido = input("\033[0;33mDigite o nome de quem deseja \033[1;91mtirar\033[0;33m da fila: \033[0;0m")
         if jogadorRemovido not in jogadoresNaFila:
             print("\033[1;33mO jogador não está na fila!\033[0;0m")
         else:
             jogadoresNaFila.remove(jogadorRemovido)
-            print("\033[1;31mO jogador foi removido da fila.\033[0;0m")
+            print("\033[1;91mO jogador foi removido da fila.\033[0;0m")
 
     elif opcao == "6":
-        jogInexistente = input("Digite o nome do jogador que deseja ver as estatísticas: ")
+        jogInexistente = input("\033[0;34mDigite o nome do jogador que deseja ver as estatísticas: \033[0;0m")
         buscar = 1
         jogadorInexistente()
 
@@ -508,13 +517,19 @@ while opcao != "0404":
             jogadoresNaFila.remove(jogInexistente)
 
     elif opcao == "8":
-        comando = f'SELECT nome FROM jogador'
-        cursor.execute(comando)
-        busca = cursor.fetchall()
-        for resultado in busca:
-            print("\033[1;92m", resultado[0], "\033[0;0m")
-        if len(busca) == 0:
-            print("\033[1;33mSem jogadores cadastrados!\033[0;0m")
+        escolha = input("Digite \033[1;34m1\033[0;0m para ver todos os jogadores e \033[1;34m2\033[0;0m para o ranking de melhores 3 jogadores: ")
+        if escolha == "1":
+            comando = f'SELECT nome FROM jogador'
+            cursor.execute(comando)
+            busca = cursor.fetchall()
+            for resultado in busca:
+                print("\033[1;92m", resultado[0], "\033[0;0m")
+            if len(busca) == 0:
+                print("\033[1;33mSem jogadores cadastrados!\033[0;0m")
+        elif escolha == "2":
+            print("Função incompleta")
+        else:
+            print("\033[1;33mSelecione uma opção válida!\033[0;0m")
 
     elif opcao == "9":
         exc = 0
@@ -543,16 +558,18 @@ while opcao != "0404":
                 exc = 1
                 tirarDe0 = float(tirarDe0)
 
+        print("\033[1;92mRegras atualizadas!\033[0;0m")
+
     elif opcao == "10":
         escolha = input("Digite \033[1;34m1\033[0;0m para histórico completo e \033[1;34m2\033[0;0m para o histórico de um jogador específico: ")
         if escolha == "1":
-            comando = f'SELECT jog_ganhador, jog_perdedor, resultado FROM historico'
+            comando = f'SELECT jog_ganhador, habilidade_ganhador, jog_perdedor, habilidade_perdedor, resultado FROM historico'
             cursor.execute(comando)
             busca = cursor.fetchall()
             for resultado in busca:
                 print("\033[1;92m", resultado, "\033[0;0m")
             if len(busca) == 0:
-                print("\033[1;33mSem jogadores cadastrados!\033[0;0m")
+                print("\033[1;33mSem partidas registradas!\033[0;0m")
         elif escolha == "2":
             jogInexistente = input("Digite o \033[1;34mnome\033[0;0m do jogador que deseja ver todo o histórico: ")
             buscar = 2
@@ -567,6 +584,19 @@ while opcao != "0404":
 
     elif opcao == "12":
         print("\033[1;36mPrograma encerrado, agradecemos por usar nosso trabalho!\033[0;0m")
+
+    elif opcao == "deletar partidas":
+        comando = 'DELETE from historico'
+        cursor.execute(comando)
+        conexao.commit() 
+        print("\033[1;31mHistórico completamente apagado.\033[0;0m")
+
+    elif opcao == "deletar jogadores":
+        comando = 'DELETE from jogador'
+        cursor.execute(comando)
+        conexao.commit() 
+        jogadoresNaFila = []
+        print("\033[1;31mJogadores apagados.\033[0;0m")
 
     else:
         print("\033[1;33mSelecione uma opção válida!\033[0;0m")

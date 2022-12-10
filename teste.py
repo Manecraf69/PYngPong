@@ -8,7 +8,7 @@ conexao = mysql.connector.connect(
 )
 cursor = conexao.cursor()
 
-Teste = 0
+Teste = 10
 
 if Teste == 1:
 
@@ -267,6 +267,59 @@ elif Teste == 9:
     for i in iguais:
         print(iguais)
         jooj = iguais[0]
+
+elif Teste == 10:
+    opcao = input("\033[1;96mDigite o número com a respectiva opção que deseja trabalhar:\033[0;0m" 
+                  "\n \033[0;97m1. \033[4;32mAdicionar alguém à fila\033[0;0m" 
+                  "\n \033[0;97m2. \033[4;34mVerificar o próximo da fila\033[0;0m" 
+                  "\n \033[0;97m3. \033[4;32mComeçar os pontos da partida\033[0;0m" 
+                  "\n \033[0;97m4. \033[4;32mInserir ganhador e perdedor\033[0;0m" 
+                  "\n \033[0;97m5. \033[4;31mTirar alguém da fila\033[0;0m"
+                  "\n \033[0;97m6. \033[4;34mVer as estatísticas de um jogador\033[0;0m"
+                  "\n \033[0;97m7. \033[4;31mExcluir jogador\033[0;0m"
+                  "\n \033[0;97m8. \033[4;34mVer jogadores\033[0;0m"
+                  "\n \033[0;97m9. \033[4;35mModificar regras\033[0;0m"
+                  "\n \033[0;97m10. \033[4;34mVer histórico\033[0;0m"
+                  "\n \033[0;97m11. \033[4;35mEditar jogador\033[0;0m"
+                  "\n \033[0;97m12. \033[4;31mEncerrar o código\033[0;0m" "\n")
+
+elif Teste == 11:
+    opcao = input("\033[1;96mDigite o número com a respectiva opção que deseja trabalhar:\033[0;0m" 
+                  "\n \033[1;92m1.\033[0;0m Adicionar alguém à fila" 
+                  "\n \033[1;94m2.\033[0;0m Verificar o próximo da fila" 
+                  "\n \033[1;92m3.\033[0;0m Começar os pontos da partida" 
+                  "\n \033[1;92m4.\033[0;0m Inserir ganhador e perdedor" 
+                  "\n \033[1;91m5.\033[0;0m Tirar alguém da fila"
+                  "\n \033[1;94m6.\033[0;0m Ver as estatísticas de um jogador"
+                  "\n \033[1;91m7.\033[0;0m Excluir jogador"
+                  "\n \033[1;94m8.\033[0;0m Ver jogadores"
+                  "\n \033[1;95m9.\033[0;0m Modificar regras"
+                  "\n \033[1;94m10.\033[0;0m Ver histórico"
+                  "\n \033[1;95m11.\033[0;0m Editar jogador"
+                  "\n \033[1;91m12.\033[0;0m Encerrar o código" "\n")
+
+elif Teste == 12:
+    jogador = "Ricardo"
+
+    comando = f'SELECT jog_ganhador FROM historico WHERE jog_ganhador = ("{jogador}")'
+    cursor.execute(comando)
+    buscaVitorias = cursor.fetchall()
+
+    comando = f'SELECT jog_perdedor FROM historico WHERE jog_perdedor = ("{jogador}")'
+    cursor.execute(comando)
+    buscaDerrotas = cursor.fetchall()
+
+    n_partidas = len(buscaVitorias) + len(buscaDerrotas)
+    n_vitorias = len(buscaVitorias)
+    n_derrotas = len(buscaDerrotas)
+    if n_derrotas == 0:
+        n_derrotas = 1
+    media_vitder = n_vitorias / n_derrotas
+
+    print(n_partidas, "partidas,", n_vitorias, "vitorias,", n_derrotas, "derrotas,", media_vitder, "media.")
+
+elif Teste == 13:
+    pass
 
 cursor.close()
 conexao.close()
