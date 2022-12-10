@@ -10,120 +10,60 @@ conexao = mysql.connector.connect(
 )
 cursor = conexao.cursor()
 
+# regras padrão
 placarMax = 5
 vaiA2 = "s"
 tirarDe0 = 3
 
-def total_partida(ganhador, perdedor):
-    # jogador 1
-    comando = f'SELECT jog_ganhador FROM historico WHERE jog_ganhador = ("{ganhador}")'
+def historicoRepetido(jogInexistente):
+    partidasGanhas = []
+    partidasPerdidas = []
+
+    jogInexistente = "Marcio"
+    comando = f'SELECT id_partida FROM historico where jog_ganhador = ("{jogInexistente}")'
     cursor.execute(comando)
-    buscaGanhadorVitorias = cursor.fetchall()
+    busca1 = cursor.fetchall()
 
-    comando = f'SELECT jog_perdedor FROM historico WHERE jog_perdedor = ("{ganhador}")'
+    for resultado in busca1:
+        partidasGanhas.append(resultado)
+
+    comando = f'SELECT id_partida FROM historico where jog_perdedor = ("{jogInexistente}")'
     cursor.execute(comando)
-    buscaGanhadorDerrotas = cursor.fetchall()
+    busca2 = cursor.fetchall()
 
-    n_partidas_ganhador = len(buscaGanhadorVitorias) + len(buscaGanhadorDerrotas)
-    n_vitorias = len(buscaGanhadorVitorias)
-    n_derrotas = len(buscaGanhadorDerrotas)
-    if n_derrotas == 0:
-        n_derrotas = 1
-    media_vitder_ganhador = n_vitorias / n_derrotas
+    for resultado in busca2:
+        partidasPerdidas.append(resultado)
 
-    # número total de partidas
-    comando = f'UPDATE jogador SET partidas = ("{n_partidas_ganhador}") WHERE nome = ("{ganhador}")'
+    mesmasPartidas = [elemento for elemento in partidasGanhas if elemento in partidasPerdidas]
+    indexDaLista = 0
+    for i in mesmasPartidas:
+        partidaJogadorDuplicado = str(mesmasPartidas[indexDaLista])
+        indexDaLista += 1
+        partidaJogadorDuplicado = partidaJogadorDuplicado.replace(",)", "")
+        partidaJogadorDuplicado = partidaJogadorDuplicado.replace("(", "")
+
+        comando = f'DELETE FROM historico WHERE id_partida = ("{partidaJogadorDuplicado}")'
+        cursor.execute(comando)
+        conexao.commit()
+
+def pontos(ganhador, perdedor):
+    comando = f'SELECT nivel_habilidade FROM jogador WHERE nome = ("{ganhador}")'
     cursor.execute(comando)
-    conexao.commit() 
+    habilidade_ganhador = cursor.fetchall()
 
-    # número de vitórias
-    comando = f'UPDATE jogador SET vitorias = ("{n_vitorias}") WHERE nome = ("{ganhador}")'
+    comando = f'SELECT nivel_habilidade FROM jogador WHERE nome = ("{perdedor}")'
     cursor.execute(comando)
-    conexao.commit() 
+    habilidade_perdedor = cursor.fetchall()
 
-    # média de vitórias / derrotas
-    comando = f'UPDATE jogador SET media_vitder = ("{media_vitder_ganhador}") WHERE nome = ("{ganhador}")'
-    cursor.execute(comando)
-    conexao.commit() 
-
-    # jogador 2
-    comando = f'SELECT jog_perdedor FROM historico WHERE jog_perdedor = ("{perdedor}")'
-    cursor.execute(comando)
-    buscaPerdedorDerrotas = cursor.fetchall()
-
-    comando = f'SELECT jog_ganhador FROM historico WHERE jog_ganhador = ("{perdedor}")'
-    cursor.execute(comando)
-    buscaPerdedorVitorias = cursor.fetchall()
-
-    n_partidas_perdedor = len(buscaPerdedorVitorias) + len(buscaPerdedorDerrotas)
-    n_vitorias = len(buscaPerdedorVitorias)
-    n_derrotas = len(buscaPerdedorDerrotas)
-    if n_derrotas == 0:
-        n_derrotas = 1
-    media_vitder_perdedor = n_vitorias / n_derrotas
-    
-    # número total de partidas
-    comando = f'UPDATE jogador SET partidas = ("{n_partidas_perdedor}") WHERE nome = ("{perdedor}")'
-    cursor.execute(comando)
-    conexao.commit() 
-
-    # número de vitórias
-    comando = f'UPDATE jogador SET vitorias = ("{n_vitorias}") WHERE nome = ("{perdedor}")'
-    cursor.execute(comando)
-    conexao.commit() 
-
-    # média de vitórias / derrotas
-    comando = f'UPDATE jogador SET media_vitder = ("{media_vitder_perdedor}") WHERE nome = ("{perdedor}")'
-    cursor.execute(comando)
-    conexao.commit()
-
-    # nível habilidade
-
-    if media_vitder_ganhador <= 1:
-        habilidade_ganhador = 1
-    elif media_vitder_ganhador < 3:
-        habilidade_ganhador = 2
-    elif media_vitder_ganhador < 5:
-        habilidade_ganhador = 3
-    elif media_vitder_ganhador < 7:
-        habilidade_ganhador = 4
-    elif media_vitder_ganhador > 7 and n_partidas_ganhador >= 40:
-        habilidade_ganhador = 5
-    else:
-        habilidade_ganhador = 1
-
-    comando = f'UPDATE jogador SET nivel_habilidade = ("{habilidade_ganhador}") WHERE nome = ("{ganhador}")'
-    cursor.execute(comando)
-    conexao.commit() 
-
-    if media_vitder_perdedor <= 1:
-        habilidade_perdedor = 1
-    elif media_vitder_perdedor < 3:
-        habilidade_perdedor = 2
-    elif media_vitder_perdedor < 5:
-        habilidade_perdedor = 3
-    elif media_vitder_perdedor < 7:
-        habilidade_perdedor = 4
-    elif media_vitder_perdedor > 7 and n_partidas_perdedor >= 40:
-        habilidade_perdedor = 5
-    else:
-        habilidade_perdedor = 1
-
-    comando = f'UPDATE jogador SET nivel_habilidade = ("{habilidade_perdedor}") WHERE nome = ("{perdedor}")'
-    cursor.execute(comando)
-    conexao.commit() 
-
-    # pontos
-
-    if habilidade_perdedor == 5:
+    if habilidade_perdedor[0][0] == 5:
         pontos_ganhos = 10
-    elif habilidade_perdedor == 4:
+    elif habilidade_perdedor[0][0] == 4:
         pontos_ganhos = 8
-    elif habilidade_perdedor == 3:
+    elif habilidade_perdedor[0][0] == 3:
         pontos_ganhos = 6
-    elif habilidade_perdedor == 2:
+    elif habilidade_perdedor[0][0] == 2:
         pontos_ganhos = 4
-    elif habilidade_perdedor == 1:
+    elif habilidade_perdedor[0][0] == 1:
         pontos_ganhos = 2
 
     comando = f'SELECT pontos FROM jogador WHERE nome = ("{ganhador}")'
@@ -137,15 +77,15 @@ def total_partida(ganhador, perdedor):
     cursor.execute(comando)
     conexao.commit() 
 
-    if habilidade_ganhador == 5:
+    if habilidade_ganhador[0][0] == 5:
         pontos_perdidos = 0
-    elif habilidade_ganhador == 4:
+    elif habilidade_ganhador[0][0] == 4:
         pontos_perdidos = 1
-    elif habilidade_ganhador == 3:
+    elif habilidade_ganhador[0][0] == 3:
         pontos_perdidos = 2
-    elif habilidade_ganhador == 2:
+    elif habilidade_ganhador[0][0] == 2:
         pontos_perdidos = 3
-    elif habilidade_ganhador == 1:
+    elif habilidade_ganhador[0][0] == 1:
         pontos_perdidos = 4
 
     comando = f'SELECT pontos FROM jogador WHERE nome = ("{perdedor}")'
@@ -156,6 +96,58 @@ def total_partida(ganhador, perdedor):
     variavelPerdedor -= pontos_perdidos
 
     comando = f'UPDATE jogador SET pontos = ("{variavelPerdedor}") WHERE nome = ("{perdedor}")'
+    cursor.execute(comando)
+    conexao.commit() 
+
+def estatisticas(jogador):
+    comando = f'SELECT jog_ganhador FROM historico WHERE jog_ganhador = ("{jogador}")'
+    cursor.execute(comando)
+    buscaVitorias = cursor.fetchall()
+
+    comando = f'SELECT jog_perdedor FROM historico WHERE jog_perdedor = ("{jogador}")'
+    cursor.execute(comando)
+    buscaDerrotas = cursor.fetchall()
+
+    n_partidas = len(buscaVitorias) + len(buscaDerrotas)
+    n_vitorias = len(buscaVitorias)
+    n_derrotas = len(buscaDerrotas)
+    if n_derrotas == 0:
+        n_derrotas = 1
+    media_vitder = n_vitorias / n_derrotas
+
+    # número total de partidas
+    comando = f'UPDATE jogador SET partidas = ("{n_partidas}") WHERE nome = ("{jogador}")'
+    cursor.execute(comando)
+    conexao.commit() 
+
+    # número de vitórias
+    comando = f'UPDATE jogador SET vitorias = ("{n_vitorias}") WHERE nome = ("{jogador}")'
+    cursor.execute(comando)
+    conexao.commit() 
+
+    # média de vitórias / derrotas
+    comando = f'UPDATE jogador SET media_vitder = ("{media_vitder}") WHERE nome = ("{jogador}")'
+    cursor.execute(comando)
+    conexao.commit() 
+
+    # nível habilidade
+
+    if media_vitder <= 1:
+        habilidade = 1
+    elif media_vitder < 3:
+        habilidade = 2
+    elif media_vitder < 5:
+        habilidade = 3
+    elif media_vitder < 7:
+        habilidade = 4
+    elif media_vitder > 7 and n_partidas >= 40:
+        habilidade = 5
+    elif media_vitder > 7:
+        habilidade = 4
+    else:
+        habilidade = 1
+
+    comando = f'UPDATE jogador SET nivel_habilidade = ("{habilidade}") WHERE nome = ("{jogador}")'
     cursor.execute(comando)
     conexao.commit() 
 
@@ -171,7 +163,13 @@ def posJogo(ganhador, perdedor, pontosGanhador, pontosPerdedor):
     cursor.execute(comando)
     conexao.commit() 
 
-    total_partida(ganhador, perdedor)
+    pontos(ganhador, perdedor)
+
+    jogador = ganhador
+    estatisticas(jogador)
+
+    jogador = perdedor
+    estatisticas(jogador)
 
 def jogadorInexistente():
     comando = f'SELECT nome FROM jogador WHERE nome = ("{jogInexistente}")'
@@ -239,6 +237,9 @@ def jogadorInexistente():
             cursor.execute(comando)
             conexao.commit()
 
+            # corrige histórico caso haja a ocasiao de o jogador ter jogado "contra si mesmo"
+            historicoRepetido(jogInexistente)
+            
             # busca os pontos e soma no jogador correto
             comando = f'SELECT pontos, nome FROM jogador WHERE nome = ("{jogInexistente}")'
             cursor.execute(comando)
@@ -277,6 +278,11 @@ def jogadorInexistente():
                 if jogInexistente in jogadoresNaFila:
                     pos = jogadoresNaFila.index(jogInexistente)
                     jogadoresNaFila.remove(jogInexistente)
+            
+            # atualiza estatísticas
+            jogador = jogInexistente
+            estatisticas(jogador)
+
             print("\033[1;92mInformaçôes atualizadas!\033[0;0m")
         else:
             print("\033[1;33mO jogador não está registrado!\033[0;0m")
@@ -303,6 +309,12 @@ def pontuacaoPingPong():
                 elif ponto == "ee":
                     E -= 1
                     pontosEsquerda -= 1
+                if D < 0:
+                    D = 0
+                    pontosDireita = 0
+                if E < 0:
+                    E = 0
+                    pontosEsquerda = 0
                 print(Direita,"(Direita)\033[1;34m",D, "x", E, "\033[0;0m", Esquerda, "(Esquerda)")
 
                 if D == tirarDe0 and E == 0:
@@ -331,6 +343,12 @@ def pontuacaoPingPong():
                             elif ponto == "ee":
                                 E -= 1
                                 pontosEsquerda -= 1
+                            if D < 0:
+                                D = 0
+                                pontosDireita = 0
+                            if E < 0:
+                                E = 0
+                                pontosEsquerda = 0
                             print(Direita,"(Direita)\033[1;34m",D, "x", E, "\033[0;0m", Esquerda, "(Esquerda)")
             
                             if E == 1 and D == 1:
@@ -408,7 +426,15 @@ while opcao != "0404":
         adicionar = 1
         jogadorInexistente()
 
-        Esquerda = input("Quem é o jogador da Esquerda? ")
+        exc = 0
+        while exc != 1:
+            Esquerda = input("Quem é o jogador da Esquerda? ")
+
+            if Direita == Esquerda:
+                print("\033[1;33mUm jogador não pode jogar contra si mesmo!\033[0;0m")
+            else:
+                exc = 1
+        
         if Esquerda not in jogadoresNaFila:
             jogadoresNaFila.insert(-1, Esquerda)
 
@@ -435,10 +461,17 @@ while opcao != "0404":
                 adicionar = 1
                 jogadorInexistente()
 
-        perdedor = input("Digite o \033[1;34mnome\033[0;0m de quem perdeu: ")
+        exc = 0
+        while exc != 1:
+            perdedor = input("Digite o \033[1;34mnome\033[0;0m de quem perdeu: ")
+            if perdedor == ganhador:
+                print("\033[1;33mUm jogador não pode jogar contra si mesmo!\033[0;0m")
+            else:
+                exc = 1
+
         if perdedor not in jogadoresNaFila:
             jogadoresNaFila.insert(-1, perdedor)
-            
+                
         exc = 0
         while exc != 1:
             pontosPerdedor = input("Digite quantos \033[1;34mpontos\033[0;0m fez o perdedor: ")

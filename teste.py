@@ -8,203 +8,265 @@ conexao = mysql.connector.connect(
 )
 cursor = conexao.cursor()
 
-Teste1 = 1
+Teste = 0
 
-# ganhador = "pedro"
-# perdedor = "claudio"
-# resultado = "3x0"
+if Teste == 1:
 
-# comando1 = f'INSERT INTO historico (jog_ganhador, jog_perdedor, resultado) VALUES ("{ganhador}","{perdedor}","{resultado}")'
-# cursor.execute(comando1)
-# conexao.commit() 
+    ganhador = "pedro"
+    perdedor = "claudio"
+    resultado = "3x0"
 
-Teste2 = 2
+    comando1 = f'INSERT INTO historico (jog_ganhador, jog_perdedor, resultado) VALUES ("{ganhador}","{perdedor}","{resultado}")'
+    cursor.execute(comando1)
+    conexao.commit() 
 
-# ganhador = "Marcio"
-# perdedor = "Paulo"
+elif Teste == 2:
 
-# ganhador = "Paulo"
-# perdedor = "Marcio"
+    ganhador = "Marcio"
+    perdedor = "Paulo"
 
-# comando = f'SELECT jog_ganhador FROM historico WHERE jog_ganhador = ("{ganhador}")'
-# cursor.execute(comando)
-# buscaGanhador1 = cursor.fetchall()
+    ganhador = "Paulo"
+    perdedor = "Marcio"
 
-# comando = f'SELECT jog_perdedor FROM historico WHERE jog_perdedor = ("{ganhador}")'
-# cursor.execute(comando)
-# buscaGanhador2 = cursor.fetchall()
+    comando = f'SELECT jog_ganhador FROM historico WHERE jog_ganhador = ("{ganhador}")'
+    cursor.execute(comando)
+    buscaGanhador1 = cursor.fetchall()
 
-# n_partidas = len(buscaGanhador1) + len(buscaGanhador2)
+    comando = f'SELECT jog_perdedor FROM historico WHERE jog_perdedor = ("{ganhador}")'
+    cursor.execute(comando)
+    buscaGanhador2 = cursor.fetchall()
 
-# comando = f'UPDATE jogador SET total_partida = ("{n_partidas}") WHERE nome = ("{ganhador}")'
-# cursor.execute(comando)
-# conexao.commit() 
+    n_partidas = len(buscaGanhador1) + len(buscaGanhador2)
 
-# comando = f'SELECT jog_perdedor FROM historico WHERE jog_perdedor = ("{perdedor}")'
-# cursor.execute(comando)
-# buscaPerdedor1 = cursor.fetchall()
+    comando = f'UPDATE jogador SET total_partida = ("{n_partidas}") WHERE nome = ("{ganhador}")'
+    cursor.execute(comando)
+    conexao.commit() 
 
-# comando = f'SELECT jog_ganhador FROM historico WHERE jog_ganhador = ("{perdedor}")'
-# cursor.execute(comando)
-# buscaPerdedor2 = cursor.fetchall()
+    comando = f'SELECT jog_perdedor FROM historico WHERE jog_perdedor = ("{perdedor}")'
+    cursor.execute(comando)
+    buscaPerdedor1 = cursor.fetchall()
 
-# n_partidas = len(buscaPerdedor1) + len(buscaPerdedor2)
+    comando = f'SELECT jog_ganhador FROM historico WHERE jog_ganhador = ("{perdedor}")'
+    cursor.execute(comando)
+    buscaPerdedor2 = cursor.fetchall()
 
-# comando = f'UPDATE jogador SET total_partida = ("{n_partidas}") WHERE nome = ("{perdedor}")'
-# cursor.execute(comando)
-# conexao.commit() 
+    n_partidas = len(buscaPerdedor1) + len(buscaPerdedor2)
 
-Teste3 = 3
+    comando = f'UPDATE jogador SET total_partida = ("{n_partidas}") WHERE nome = ("{perdedor}")'
+    cursor.execute(comando)
+    conexao.commit() 
 
-# ganhador = "Marcio"
-# perdedor = "Paulo"
+elif Teste == 3:
 
-# # ganhador = "Paulo"
-# # perdedor = "Marcio"
+    ganhador = "Marcio"
+    perdedor = "Paulo"
 
-# comando = f'SELECT jog_ganhador, jog_perdedor FROM historico WHERE jog_ganhador = ("{ganhador}")'
-# cursor.execute(comando)
-# buscaGanhador = cursor.fetchall()
+    # ganhador = "Paulo"
+    # perdedor = "Marcio"
 
-# n_partidas = len(buscaGanhador)
+    comando = f'SELECT jog_ganhador, jog_perdedor FROM historico WHERE jog_ganhador = ("{ganhador}")'
+    cursor.execute(comando)
+    buscaGanhador = cursor.fetchall()
 
-# comando = f'UPDATE jogador SET total_partida = ("{n_partidas}") WHERE nome = ("{ganhador}")'
-# cursor.execute(comando)
-# conexao.commit() 
+    n_partidas = len(buscaGanhador)
 
-# comando = f'SELECT jog_perdedor, jog_ganhador FROM historico WHERE jog_perdedor = ("{perdedor}")'
-# cursor.execute(comando)
-# buscaPerdedor = cursor.fetchall()
+    comando = f'UPDATE jogador SET total_partida = ("{n_partidas}") WHERE nome = ("{ganhador}")'
+    cursor.execute(comando)
+    conexao.commit() 
 
-# n_partidas = len(buscaPerdedor)
+    comando = f'SELECT jog_perdedor, jog_ganhador FROM historico WHERE jog_perdedor = ("{perdedor}")'
+    cursor.execute(comando)
+    buscaPerdedor = cursor.fetchall()
 
-# comando = f'UPDATE jogador SET total_partida = ("{n_partidas}") WHERE nome = ("{perdedor}")'
-# cursor.execute(comando)
-# conexao.commit() 
+    n_partidas = len(buscaPerdedor)
 
-# print(buscaGanhador, buscaPerdedor)
+    comando = f'UPDATE jogador SET total_partida = ("{n_partidas}") WHERE nome = ("{perdedor}")'
+    cursor.execute(comando)
+    conexao.commit() 
 
-Teste4 = 4
+    print(buscaGanhador, buscaPerdedor)
 
-# well = [67, 9.89, 5]
-# rodrigo = [74, 8.23, 5]
-# marcio = [102, 4.09, 4]
-# bololo = [30, 0.21, 1]
-# paulo = [26, 2.01, 2]
+elif Teste == 4:
 
-# teste1 = [0, 0.00, 0] # ganha
-# teste2 = [0, 0.00, 0]
+    well = [67, 9.89, 5]
+    rodrigo = [74, 8.23, 5]
+    marcio = [102, 4.09, 4]
+    bololo = [30, 0.21, 1]
+    paulo = [26, 2.01, 2]
 
-# teste1 = [1, 1.00, 2] # ganha dnv
-# teste2 = [1, 0.00, 0]
+    teste1 = [0, 0.00, 0] # ganha
+    teste2 = [0, 0.00, 0]
 
-# if media_vitder < 1:
-#     pontos + 0
-# elif media_vitder > 1 and media_vitder < 3:
-#     pontos + 1
-# elif media_vitder > 3 and media_vitder < 5:
-#     pontos + 2
-# elif media_vitder > 5 and media_vitder < 3:
-#     pontos + 3
-# elif media_vitder > 7:
-#     pontos + 4
+    teste1 = [1, 1.00, 2] # ganha dnv
+    teste2 = [1, 0.00, 0]
 
-# if media_vitder < 1:
-#     pontos - 4
-# elif media_vitder > 1 and media_vitder < 3:
-#     pontos - 3
-# elif media_vitder > 3 and media_vitder < 5:
-#     pontos - 2
-# elif media_vitder > 5 and media_vitder < 3:
-#     pontos - 1
-# elif media_vitder > 7:
-#     pontos - 0
+    # if media_vitder < 1:
+    #     pontos + 0
+    # elif media_vitder > 1 and media_vitder < 3:
+    #     pontos + 1
+    # elif media_vitder > 3 and media_vitder < 5:
+    #     pontos + 2
+    # elif media_vitder > 5 and media_vitder < 3:
+    #     pontos + 3
+    # elif media_vitder > 7:
+    #     pontos + 4
 
-Teste5 = 5
+    # if media_vitder < 1:
+    #     pontos - 4
+    # elif media_vitder > 1 and media_vitder < 3:
+    #     pontos - 3
+    # elif media_vitder > 3 and media_vitder < 5:
+    #     pontos - 2
+    # elif media_vitder > 5 and media_vitder < 3:
+    #     pontos - 1
+    # elif media_vitder > 7:
+    #     pontos - 0
 
-# comando = f'SELECT partidas FROM jogador WHERE nome = "Marcio"'
-# cursor.execute(comando)
-# busca = cursor.fetchall()
+    a = 0
 
-# variavel = busca[0][0]
+elif Teste == 5:
 
-# variavel *= 5
+    comando = f'SELECT partidas FROM jogador WHERE nome = "Marcio"'
+    cursor.execute(comando)
+    busca = cursor.fetchall()
 
-# print(variavel)
+    variavel = busca[0][0]
 
-# Teste6 =6
+    variavel *= 5
 
-# ganhador = "Marcio"
-# perdedor = "Paulo"
+    print(variavel)
 
-# habilidade_ganhador = 4
-# habilidade_perdedor = 2
+    Teste6 =6
 
-# if habilidade_perdedor == 5:
-#     pontos_ganhos = 4
-# elif habilidade_perdedor == 4:
-#     pontos_ganhos = 3
-# elif habilidade_perdedor == 3:
-#     pontos_ganhos = 2
-# elif habilidade_perdedor == 2:
-#     pontos_ganhos = 1
-# elif habilidade_perdedor == 1:
-#     pontos_ganhos = 0
+    ganhador = "Marcio"
+    perdedor = "Paulo"
 
-# comando = f'SELECT pontos FROM jogador WHERE nome = ("{ganhador}")'
-# cursor.execute(comando)
-# busca = cursor.fetchall()
+    habilidade_ganhador = 4
+    habilidade_perdedor = 2
 
-# variavel = busca[0][0]
-# variavel += pontos_ganhos
+    if habilidade_perdedor == 5:
+        pontos_ganhos = 4
+    elif habilidade_perdedor == 4:
+        pontos_ganhos = 3
+    elif habilidade_perdedor == 3:
+        pontos_ganhos = 2
+    elif habilidade_perdedor == 2:
+        pontos_ganhos = 1
+    elif habilidade_perdedor == 1:
+        pontos_ganhos = 0
 
-# comando = f'UPDATE jogador SET pontos = ("{variavel}") WHERE nome = ("{ganhador}")'
-# cursor.execute(comando)
-# conexao.commit() 
+    comando = f'SELECT pontos FROM jogador WHERE nome = ("{ganhador}")'
+    cursor.execute(comando)
+    busca = cursor.fetchall()
 
-# if habilidade_ganhador == 5:
-#     pontos_perdidos = 0
-# elif habilidade_ganhador == 4:
-#     pontos_perdidos = 1
-# elif habilidade_ganhador == 3:
-#     pontos_perdidos = 2
-# elif habilidade_ganhador == 2:
-#     pontos_perdidos = 3
-# elif habilidade_ganhador == 1:
-#     pontos_perdidos = 4
+    variavel = busca[0][0]
+    variavel += pontos_ganhos
 
-# comando = f'SELECT pontos FROM jogador WHERE nome = ("{perdedor}")'
-# cursor.execute(comando)
-# busca = cursor.fetchall()
+    comando = f'UPDATE jogador SET pontos = ("{variavel}") WHERE nome = ("{ganhador}")'
+    cursor.execute(comando)
+    conexao.commit() 
 
-# variavel = busca[0][0]
-# variavel -= pontos_perdidos
+    if habilidade_ganhador == 5:
+        pontos_perdidos = 0
+    elif habilidade_ganhador == 4:
+        pontos_perdidos = 1
+    elif habilidade_ganhador == 3:
+        pontos_perdidos = 2
+    elif habilidade_ganhador == 2:
+        pontos_perdidos = 3
+    elif habilidade_ganhador == 1:
+        pontos_perdidos = 4
 
-# comando = f'UPDATE jogador SET pontos = ("{variavel}") WHERE nome = ("{perdedor}")'
-# cursor.execute(comando)
-# conexao.commit() 
+    comando = f'SELECT pontos FROM jogador WHERE nome = ("{perdedor}")'
+    cursor.execute(comando)
+    busca = cursor.fetchall()
 
-Teste6 = 6
+    variavel = busca[0][0]
+    variavel -= pontos_perdidos
 
-# var1 = 5
-# var2 = 6
+    comando = f'UPDATE jogador SET pontos = ("{variavel}") WHERE nome = ("{perdedor}")'
+    cursor.execute(comando)
+    conexao.commit() 
 
-# if var1 == var2 - 1:
-#     print("ae sim")
+elif Teste == 6:
 
-Teste7 = 7
+    var1 = 5
+    var2 = 6
 
-# comando = f'UPDATE jogador SET partidas = 15 WHERE nome = "Marcio999"'
-# cursor.execute(comando)
-# conexao.commit()
+    if var1 == var2 - 1:
+        print("ae sim")
 
-# comando = f'SELECT pontos, nome FROM jogador WHERE nome = "Marcio"'
-# cursor.execute(comando)
-# busca1 = cursor.fetchall()
-            
-# pontosJogadorAntigo = busca1[0][0]
-# nomeJogadorAntigo = busca1[-1][-1]
-# print(pontosJogadorAntigo, nomeJogadorAntigo)
+elif Teste == 7:
+
+    comando = f'UPDATE jogador SET partidas = 15 WHERE nome = "Marcio999"'
+    cursor.execute(comando)
+    conexao.commit()
+
+    comando = f'SELECT pontos, nome FROM jogador WHERE nome = "Marcio"'
+    cursor.execute(comando)
+    busca1 = cursor.fetchall()
+                
+    pontosJogadorAntigo = busca1[0][0]
+    nomeJogadorAntigo = busca1[-1][-1]
+    print(pontosJogadorAntigo, nomeJogadorAntigo)
+
+elif Teste == 8:
+    lista1 = []
+    lista2 = []
+
+    jogInexistente = "Marcio"
+    comando = f'SELECT id_partida FROM historico where jog_ganhador = ("{jogInexistente}")'
+    cursor.execute(comando)
+    busca1 = cursor.fetchall()
+
+    for resultado in busca1:
+        lista1.append(resultado)
+
+    comando = f'SELECT id_partida FROM historico where jog_perdedor = ("{jogInexistente}")'
+    cursor.execute(comando)
+    busca2 = cursor.fetchall()
+
+    for resultado in busca2:
+        lista2.append(resultado)
+
+    iguais = [elemento for elemento in lista1 if elemento in lista2]
+    batatas = 0
+    for i in iguais:
+        print(i)
+        jooj = iguais[0]
+        jooj1 = str(iguais[batatas])
+        batatas += 1
+        jooj1 = jooj1.replace(",)", "")
+        jooj1 = jooj1.replace("(", "")
+
+        comando = f'DELETE FROM historico WHERE id_partida = ("{jooj1}")'
+        cursor.execute(comando)
+        conexao.commit()
+
+elif Teste == 9:
+    lista1 = []
+    lista2 = []
+    suamae = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+    jogInexistente = "Marcio"
+    comando = f'SELECT id_partida FROM historico where jog_ganhador = ("{jogInexistente}")'
+    cursor.execute(comando)
+    busca1 = cursor.fetchall()
+
+    for resultado in busca1:
+        lista1.append(resultado)
+
+    comando = f'SELECT id_partida FROM historico where jog_perdedor = ("{jogInexistente}")'
+    cursor.execute(comando)
+    busca2 = cursor.fetchall()
+
+    for resultado in busca2:
+        lista2.append(resultado)
+
+    iguais = [elemento for elemento in lista1 if elemento in lista2]
+    for i in iguais:
+        print(iguais)
+        jooj = iguais[0]
 
 cursor.close()
 conexao.close()
