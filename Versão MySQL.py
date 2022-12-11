@@ -15,6 +15,33 @@ placarMax = 5
 vaiA2 = "s"
 tirarDe0 = 3
 
+def rankingDeJogadores():
+    pontosDosJogadores = []
+
+    comando = f'SELECT pontos FROM jogador'
+    cursor.execute(comando)
+    pontos = cursor.fetchall()
+
+    for i in pontos:
+        pontosDosJogadores.append(i[0])
+
+    pontosDosJogadores.sort(reverse = True)
+
+    indexDaLista = 0
+    if len(pontosDosJogadores) > 0:
+        print("\033[1;94mNome do jogador, pontos e número de partidas: ")
+        for i in pontosDosJogadores:
+            comando = f'SELECT nome, pontos, partidas FROM jogador WHERE pontos = ("{pontosDosJogadores[indexDaLista]}")'
+            cursor.execute(comando)
+            nomeJogadorRankeado = cursor.fetchall()
+            for i in nomeJogadorRankeado:
+                print(i)
+            if indexDaLista == 3:
+                break
+            indexDaLista += 1
+    else:
+        print("\033[0;33mNão há jogadores cadastrados!\033[0;0m")
+
 def historicoRepetido(jogInexistente):
     partidasGanhas = []
     partidasPerdidas = []
@@ -208,7 +235,7 @@ def jogadorInexistente():
             cursor.execute(comando)
             busca = cursor.fetchall()
             for resultado in busca:
-                print("\033[1;92mNome: ", resultado[0])
+                print("\033[1;94mNome: ", resultado[0])
                 print("Número de partidas: ", resultado[1])
                 print("Número de vitórias: ", resultado[2])
                 print("Média de vitória / derrota: ", resultado[3])
@@ -223,13 +250,13 @@ def jogadorInexistente():
             cursor.execute(comando1)
             busca1 = cursor.fetchall()
             for resultado in busca1:
-                print("\033[1;92m", resultado, "\033[0;0m")
+                print("\033[1;94m", resultado, "\033[0;0m")
                 
             comando2 = f'SELECT jog_ganhador, jog_perdedor, resultado FROM historico WHERE jog_perdedor = ("{jogInexistente}")'
             cursor.execute(comando2)
             busca2 = cursor.fetchall()
             for resultado in busca2:
-                print("\033[1;92m", resultado, "\033[0;0m")
+                print("\033[1;94m", resultado, "\033[0;0m")
 
             if len(busca1) == 0 and len(busca2) == 0:
                 print("\033[1;33m O jogador ainda não participou de nenhuma partida!\033[0;0m")
@@ -393,19 +420,20 @@ while opcao != "0404":
     deletar = 0
     buscar = 0
     atualizar = 0
-    opcao = input("\033[1;95mDigite o número com a respectiva opção que deseja trabalhar:\033[0;0m" 
-                  "\n 1. Adicionar alguém à fila" 
-                  "\n 2. Verificar o próximo da fila" 
-                  "\n 3. Começar os pontos da partida" 
-                  "\n 4. Inserir ganhador e perdedor" 
-                  "\n 5. Tirar alguém da fila"
-                  "\n 6. Ver as estatísticas de um jogador"
-                  "\n 7. Excluir jogador"
-                  "\n 8. Ver jogadores"
-                  "\n 9. Modificar regras"
-                  "\n 10. Ver histórico"
-                  "\n 11. Editar jogador"
-                  "\n 12. Encerrar o código" "\n")
+    opcao = input("\033[1;96mDigite o número com a respectiva opção que deseja trabalhar:\033[0;0m" 
+                  "\n \033[1;92m1.\033[0;0m Adicionar alguém à fila" 
+                  "\n \033[1;94m2.\033[0;0m Verificar o próximo da fila" 
+                  "\n \033[1;92m3.\033[0;0m Começar os pontos da partida" 
+                  "\n \033[1;92m4.\033[0;0m Inserir ganhador e perdedor" 
+                  "\n \033[1;91m5.\033[0;0m Tirar alguém da fila"
+                  "\n \033[1;94m6.\033[0;0m Ver as estatísticas de um jogador"
+                  "\n \033[1;91m7.\033[0;0m Excluir jogador"
+                  "\n \033[1;94m8.\033[0;0m Ver jogadores"
+                  "\n \033[1;95m9.\033[0;0m Modificar regras"
+                  "\n \033[1;94m10.\033[0;0m Ver histórico"
+                  "\n \033[1;95m11.\033[0;0m Editar jogador"
+                  "\n \033[1;92m12.\033[0;0m Começar torneio"
+                  "\n \033[1;91m13.\033[0;0m Encerrar o código" "\n")
 
     if opcao == "1":
         jogadorNovo = input("\033[0;32mDigite quem entrou na fila: \033[0;0m")
@@ -464,6 +492,8 @@ while opcao != "0404":
             pontosGanhador = input("\033[0;32mDigite quantos \033[1;34mpontos\033[0;32m fez o ganhador: \033[0;0m")
             if not pontosGanhador.isdigit():
                 print("\033[1;33mDigite um número!\033[0;0m")
+            elif float(pontosGanhador) < 3:
+                print("\033[1;33mO jogador não pode ganhar com menos de 3 pontos!\033[0;0m")
             else:
                 exc = 1
                 jogInexistente = ganhador
@@ -486,6 +516,10 @@ while opcao != "0404":
             pontosPerdedor = input("\033[0;32mDigite quantos \033[1;34mpontos\033[0;32m fez o perdedor: \033[0;0m")
             if not pontosPerdedor.isdigit():
                 print("\033[1;33mDigite um número!\033[0;0m")
+            elif float(pontosPerdedor) > float(pontosGanhador):
+                print("\033[1;33mO perdedor não pode ter feito mais pontos que o ganhador!\033[0;0m")
+            elif float(pontosPerdedor) == float(pontosGanhador):
+                print("\033[1;33mA partida não pode acabar em empate!\033[0;0m")
             else:
                 exc = 1
                 jogInexistente = perdedor
@@ -517,17 +551,17 @@ while opcao != "0404":
             jogadoresNaFila.remove(jogInexistente)
 
     elif opcao == "8":
-        escolha = input("Digite \033[1;34m1\033[0;0m para ver todos os jogadores e \033[1;34m2\033[0;0m para o ranking de melhores 3 jogadores: ")
+        escolha = input("Digite \033[1;34m1\033[0;0m para ver todos os jogadores e \033[1;34m2\033[0;0m para o ranking das 3 melhores pontuações: ")
         if escolha == "1":
             comando = f'SELECT nome FROM jogador'
             cursor.execute(comando)
             busca = cursor.fetchall()
             for resultado in busca:
-                print("\033[1;92m", resultado[0], "\033[0;0m")
+                print("\033[1;94m", resultado[0], "\033[0;0m")
             if len(busca) == 0:
                 print("\033[1;33mSem jogadores cadastrados!\033[0;0m")
         elif escolha == "2":
-            print("Função incompleta")
+            rankingDeJogadores()
         else:
             print("\033[1;33mSelecione uma opção válida!\033[0;0m")
 
@@ -536,7 +570,9 @@ while opcao != "0404":
         while exc != 1:
             placarMax = input("Selecione a quantidade de \033[1;34mpontos\033[0;0m necessários para \033[1;34mvencer\033[0;0m a partida: ")
             if not placarMax.isdigit():
-                    print("\033[1;33mDigite um número!\033[0;0m")
+                print("\033[1;33mDigite um número!\033[0;0m")
+            elif float(placarMax) < 3:
+                print("\033[1;33mNo mínimo 3 pontos para vitória!\033[0;0m")
             else:
                 exc = 1
                 placarMax = float(placarMax)
@@ -553,7 +589,9 @@ while opcao != "0404":
         while exc != 1:
             tirarDe0 = input("Digite com quantos \033[1;34mpontos a zero\033[0;0m a partida acaba: ")
             if not tirarDe0.isdigit():
-                    print("\033[1;33mDigite um número!\033[0;0m")
+                print("\033[1;33mDigite um número!\033[0;0m")
+            elif float(tirarDe0) < 3:
+                print("\033[1;33mNo mínimo 3 pontos para tirar de 0!\033[0;0m")
             else:
                 exc = 1
                 tirarDe0 = float(tirarDe0)
@@ -567,7 +605,7 @@ while opcao != "0404":
             cursor.execute(comando)
             busca = cursor.fetchall()
             for resultado in busca:
-                print("\033[1;92m", resultado, "\033[0;0m")
+                print("\033[1;94m", resultado, "\033[0;0m")
             if len(busca) == 0:
                 print("\033[1;33mSem partidas registradas!\033[0;0m")
         elif escolha == "2":
@@ -583,6 +621,9 @@ while opcao != "0404":
         jogadorInexistente()
 
     elif opcao == "12":
+        print("\033[0;33mFunção incompleta...\033[0;0m")
+
+    elif opcao == "13":
         print("\033[1;36mPrograma encerrado, agradecemos por usar nosso trabalho!\033[0;0m")
 
     elif opcao == "deletar partidas":

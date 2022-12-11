@@ -8,7 +8,7 @@ conexao = mysql.connector.connect(
 )
 cursor = conexao.cursor()
 
-Teste = 10
+Teste = 11
 
 if Teste == 1:
 
@@ -319,7 +319,34 @@ elif Teste == 12:
     print(n_partidas, "partidas,", n_vitorias, "vitorias,", n_derrotas, "derrotas,", media_vitder, "media.")
 
 elif Teste == 13:
-    pass
+    pontosDosJogadores = []
 
+    comando = f'SELECT pontos FROM jogador'
+    cursor.execute(comando)
+    pontos = cursor.fetchall()
+
+    for i in pontos:
+        # print(i[0])
+        pontosDosJogadores.append(i[0])
+
+    pontosDosJogadores.sort(reverse = True)
+    # print(pontosDosJogadores)
+
+    indexDaLista = 0
+    if len(pontosDosJogadores) > 0:
+        print("Nome do jogador, pontos e número de partidas: ")
+        for i in pontosDosJogadores:
+            # print(pontosDosJogadores[indexDaLista])
+            comando = f'SELECT nome, pontos, partidas FROM jogador WHERE pontos = ("{pontosDosJogadores[indexDaLista]}")'
+            cursor.execute(comando)
+            nomeJogadorRankeado = cursor.fetchall()
+            for i in nomeJogadorRankeado:
+                print(i)
+            if indexDaLista == 3:
+                break
+            indexDaLista += 1
+    else:
+        print("Não há jogadores cadastrados!")
+        
 cursor.close()
 conexao.close()
